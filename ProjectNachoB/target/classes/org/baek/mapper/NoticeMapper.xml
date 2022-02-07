@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.baek.mapper.NoticeMapper">
+	<select id="getList" resultType="org.baek.domain.NoticeVO">
+  		<![CDATA[
+  			SELECT B.*
+  			FROM ( 
+  					SELECT ROWNUM RN , A.*
+  				    FROM (
+  				    		SELECT A.NTNO
+  				    			  ,A.TITLE
+  				    			  ,A.CONTENT
+  				    			  ,A.REGDATE
+  				    			  ,A.UPDATEDATE
+  				    			  ,B.MID
+  				    			  ,B.MNAME 
+  				    		FROM NOTICELIST A
+  				    		LEFT JOIN MEMBERTABLE B ON A.MID = B.MID 
+  				    		ORDER BY A.NTNO DESC
+  				    	  ) A
+  				    WHERE ROWNUM <= #{pageNum} * #{amount}
+  				    ) B
+  			 WHERE RN> (#{pageNum} -1 ) * #{amount}
+  		
+  			 
+  		]]>
+  		 <if test= 'searchKeyword != null and searchKeyword !=""'>
+		 	<if test= 'searchType == "mname"'>
+		 	<![CDATA[
+		 		AND B.MNAME LIKE '%'||#{searchKeyword}||'%'
+		 		]]>
+		 	</if>
+			<if test= 'searchType == "title"'>
+			<![CDATA[
+		 		AND B.TITLE LIKE '%'||#{searchKeyword}||'%'
+		 		  					
+		 		]]>
+		 	</if>
+  		</if>
+	</select>
+	<insert id="insert">
+		INSERT INTO Noticelist (ntno, title, content, mid)
+		VALUES
+		(notice_seq.nextval,
+		#{title}, #{content},#{mid})
+	</insert>
+
+	<select id="read" resultType="org.baek.domain.NoticeVO">
+		SELECT bl.* , mb.mname 
+		FROM NOTICELIST bl
+		LEFT OUTER JOIN  MEMBERTABLE mb ON bl.mid = mb.mid 
+		WHERE ntno = #{ntno}
+	</select>
+
+	<delete id="delete">
+		DELETE FROM NOTICELIST WHERE ntno = #{ntno}
+	</delete>
+
+	<update id="update">
+		UPDATE NOTICELIST
+		SET title = #{title},
+		content = #{content},
+		mid = #{mid},
+		updatedate = sysdate
+		WHERE ntno = #{ntno}
+	</update>
+
+	<select id="getTotalCount" resultType="int">
+		select count(*) from
+		NOTICELIST
+	</select>
+
+</mapper>

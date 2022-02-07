@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.baek.mapper.MovieMapper">
+	
+	<select id="getMing" resultType="org.baek.domain.MovieVO">
+		<![CDATA[
+			select * from movielist where ming = '현재 상영중' order by mno desc
+		]]>
+	</select>
+
+	<select id="read" resultType="org.baek.domain.MovieVO" parameterType="int">
+		select * from movielist where mno = #{mno}
+	</select>
+	
+	<select id="read2" resultType="org.baek.domain.MovieVO" parameterType="int">
+		select * from movielist where genre1 = (select genre1 from movielist where mno = #{mno})
+		or genre2 = (select genre1 from movielist where mno = #{mno}) order by mno desc	
+	</select>
+	
+	<select id="read3" resultType="org.baek.domain.MovieVO" parameterType="int">
+		select * from movielist where genre1 = (select genre2 from movielist where mno = #{mno})
+		or genre2 = (select genre2 from movielist where mno = #{mno}) order by mno asc	
+	</select>
+
+		<select id="getAllFromOne" parameterType="org.baek.domain.MovieVO" resultType="org.baek.domain.MovieVO">
+  		<![CDATA[
+  				SELECT * FROM MOVIELIST 
+  				WHERE TITLE LIKE '%'||#{title}||'%'
+  				OR GENRE1 LIKE '%'||#{genre1}||'%'
+  				OR GENRE2 LIKE '%'||#{genre2}||'%'
+  				OR MAINACT1 LIKE '%'||#{mainact1}||'%'
+  				OR MAINACT2 LIKE '%'||#{mainact2}||'%'
+  				OR SUPPORTACT1 LIKE '%'||#{supportact1}||'%'
+  				OR SUPPORTACT2 LIKE '%'||#{supportact2}||'%'
+  				OR DIRECTOR LIKE '%'||#{director}||'%'
+  				OR CONTENT LIKE '%'||#{content}||'%'	
+  		]]>
+  	</select>
+  	
+  	
+  	<select id="getListByMainact1" parameterType="String" resultType="org.baek.domain.MovieVO">
+  		select * from movielist where mainact1 = #{mainact1}
+  	</select>
+  
+  	<select id="getAllFromGenre" parameterType="String" resultType="org.baek.domain.MovieVO">
+  		<![CDATA[
+  			select * from movielist 
+  			where genre1 like '%'||#{genre1}||'%'
+  			or genre2 like '%'||#{genre2}||'%'
+  		]]>
+  	</select>
+  	
+  	<select id="getAllFromAge" parameterType="String" resultType="org.baek.domain.MovieVO">
+  		select * from movielist where age = #{age}
+  	</select>
+  	
+  	
+  	
+  	<select id="getAllFromYear2" parameterType="int" resultType="org.baek.domain.MovieVO">
+  		<![CDATA[
+  			select * from movielist where rdate > #{year1} and rdate < #{year2} 
+  		]]> 	
+  	</select>
+  	
+  	<update id="updateMpoint" parameterType="org.baek.domain.MovieVO">
+		update movielist set mpoint = (select avg(point) from moviereply where mno = #{mno}) where mno = #{mno}
+	</update>
+</mapper>

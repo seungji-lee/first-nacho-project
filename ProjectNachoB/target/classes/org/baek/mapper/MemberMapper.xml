@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="org.baek.mapper.MemberMapper">
+   <resultMap type="org.baek.domain.MemberVO" id="memberMap">
+      <result property="mid" column="mid"/>
+      <result property="mpw" column="mpw"/>
+      <result property="mchpw" column="mchpw"/>
+      <result property="mname" column="mname"/>
+      <result property="memail" column="memail"/>
+      <collection property="authList" resultMap="authMap"></collection>
+   </resultMap>
+
+
+   <resultMap type="org.baek.domain.AuthVO" id="authMap">
+      <result property="userid" column="userid"/>
+      <result property="auth" column="auth"/>
+   </resultMap>
+
+	<!-- resultMap은 개발자가 직접 원하는 POJO클래스에 매핑 가능, 그러므로 위의 MemberMap에 매핑을 함 -->
+   <select id="read" resultMap="memberMap">
+      select
+         mem.mid, mpw, mchpw, mname, memail, auth
+      from 
+         membertable mem LEFT OUTER JOIN membertable_auth auth
+         on mem.mid = auth.mid
+      where 
+         mem.mid = #{mid}
+   </select>
+   
+   <!-- 회원가입 쿼리 -->
+   <insert id="register">
+   	insert into membertable 
+   		(mid, mpw, mchpw, mname, memail) 
+	values
+		(#{mid}, #{mpw}, #{mchpw}, #{mname}, #{memail})
+   </insert>
+   
+  <!-- 아이디 중복확인 쿼리 -->
+ 	<select id="userIdCheck" parameterType="String" resultType="int" >
+   		select count(*) from membertable where mid = #{mid}
+   </select>
+   
+   <!-- 비밀번호,비밀번호 확인 바꾸기 -->
+   <update id="updatePw" parameterType="org.baek.domain.MemberVO">
+   <![CDATA[
+ 		update membertable set mpw = #{mpw}, mchpw = #{mchpw} where mid = #{mid}
+ 		]]>
+   </update>
+   
+   
+   <!-- 이름, 이메일로 아이디 찾기 -->
+   <select id="findIdByNameAndEmail" parameterType="String" resultType="org.baek.domain.MemberVO">
+   		select * from membertable where mname = #{mname} and memail = #{memail}
+   </select>
+ 
+ 	<!-- 아이디, 이름, 이메일로 비밀번호 찾기. 확인완료 -->
+	<select id="findPwByIdAndNameAndEmail" parameterType="String" resultType="org.baek.domain.MemberVO">
+		select * from membertable where mid = #{mid} and mname = #{mname} and memail = #{memail}
+	</select>   
+   
+   	<!-- 비밀번호 변경을 위한 확인을 위해 조건에 맞는 객체 가져오기 -->
+   	<select id="getVOForNewPw" parameterType="String" resultType="org.baek.domain.MemberVO">
+   		select * from membertable where mid= #{mid} and mname = #{mname} and memail = #{memail}
+   	</select>
+   	
+   	<select id="getVOForChangePersonalInfo" resultType="org.baek.domain.MemberVO">
+   		select * from membertable where mid=#{mid} and mchpw= #{mchpw}
+   	</select>
+   		
+   	<!-- 회원정보 수정 -->
+   	<update id="updateMember">
+   		update membertable set mname = #{mname}, mpw = #{mpw}, mchpw=#{mchpw}, memail = #{memail} 
+   			where mid = #{mid}
+   	</update>
+   	
+   	  <!-- 마이페이지에서 예매내역 출력 -->
+   <select id="Mytickets" resultType="org.baek.domain.TicketingVO" parameterType="String">
+   		select * from ticketing where mid = #{mid}
+   </select>
+   <!-- 마이페이지에서 후기글 출력 -->
+   <select id="Myboard" resultType="org.baek.domain.BoardVO" parameterType="String">
+   		select * from boardlist where mid = #{mid}
+   </select>
+   <!-- 마이페이지에서 한줄평 출력 -->
+   <select id="MyMovieReply" resultType="org.baek.domain.MovieReplyVO" parameterType="String">
+        select * from moviereply where mid = #{mid}
+   </select>
+</mapper>

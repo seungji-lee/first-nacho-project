@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="org.baek.mapper.ReplyMapper">
+	
+	<insert id="insert">
+		INSERT INTO BOARDREPLY VALUES 
+		( 
+			  seq_reply.nextval, #{bno}
+			, #{mid}, #{reply} , sysdate, sysdate
+		)
+	</insert>
+	
+	<select id="getList" resultType="org.baek.domain.ReplyVO">
+		<![CDATA[
+			SELECT 
+				 BR.RNO
+				,BR.BNO
+				,BR.REPLY
+				,BR.MID
+				,TO_CHAR(BR.REGDATE    , 'YYYY-MM-DD') AS strRegdate
+				,TO_CHAR(BR.UPDATEDATE , 'YYYY-MM-DD') AS strUpdatedate
+				,M.MNAME
+			FROM BOARDREPLY BR
+			LEFT OUTER JOIN MEMBERTABLE M ON BR.MID = M.MID
+			WHERE 1=1 
+			AND BNO = #{bno}
+			ORDER BY BR.RNO DESC
+		]]>
+	</select>
+	
+	<select id="read" resultType="org.baek.domain.ReplyVO">
+		SELECT 
+				 BR.RNO
+				,BR.BNO
+				,BR.REPLY
+				,BR.MID
+				,TO_CHAR(BR.REGDATE    , 'YYYY-MM-DD') AS strRegdate
+				,TO_CHAR(BR.UPDATEDATE , 'YYYY-MM-DD') AS strUpdatedate
+				,M.MNAME
+			FROM BOARDREPLY BR
+			LEFT OUTER JOIN MEMBERTABLE M ON BR.MID = M.MID
+			WHERE 1=1 
+			AND rno = #{rno}
+	</select>
+	
+	<delete id="delete" parameterType="org.baek.domain.ReplyVO">
+		delete from BOARDREPLY where rno = #{rno}
+	</delete>
+	
+	<delete id="boardReplyDelete">
+		delete from boardReply where bno = #{bno}
+	</delete>
+	
+	<update id="update" parameterType="org.baek.domain.ReplyVO" >
+		update BOARDREPLY set reply = #{reply} where rno = #{rno}
+	</update>
+</mapper>

@@ -1,0 +1,20 @@
+@font-face {
+  font-family: webisfree;
+  src: url('./GmarketSansTTFBold.ttf');
+}
+.testFont{font-family : "webisfree" , serif;}
+
+
+1. 폰트 파일을 css폴더안
+font 폴더안에 넣는다.
+
+2.  @폰트페이스로
+폰트 패밀리에 임의 이름을 지정.
+
+3. url에 경로를 지정해준다.
+src: url('./font/GmarketSansTTFBold.ttf');
+GmarketSansTTFBold.ttf->폰트파일명
+
+4. 클래스를 준다. (글꼴마다)
+
+5. 클래스 준다.

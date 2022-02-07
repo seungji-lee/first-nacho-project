@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.baek.mapper.MovieReplyMapper">
+
+   <select id="getMovieReplyList" resultType="org.baek.domain.MovieReplyVO">
+      <![CDATA[
+         select * from moviereply where mno=#{mno} order by mrno desc   
+      ]]>
+   </select>
+   
+   <insert id="insertMreply">
+      insert into moviereply values(mreply_seq.nextval, #{mid}, #{content}, #{point}, #{mno}, #{title}, sysdate)
+   </insert>
+   
+   <delete id="deleteMreply">
+      delete from moviereply where mrno = #{mrno}
+   </delete>
+</mapper>

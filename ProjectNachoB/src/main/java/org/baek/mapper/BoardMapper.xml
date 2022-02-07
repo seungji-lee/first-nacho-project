@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.baek.mapper.BoardMapper">
+
+	<select id="getList" resultType="org.baek.domain.BoardVO">
+  		<![CDATA[
+  			SELECT B.*
+  			FROM ( 
+  					SELECT ROWNUM RN , A.*
+  				    FROM (
+  				    		SELECT A.BNO
+  				    			  ,A.TITLE
+  				    			  ,A.CONTENT
+  				    			  ,A.REGDATE
+  				    			  ,A.UPDATEDATE
+  				    			  ,A.REPLYCNT
+  				    			  ,B.MID
+  				    			  ,B.MNAME
+  				    			  ,A.HIT
+  				    		FROM BOARDLIST A
+  				    		LEFT JOIN MEMBERTABLE B ON A.MID = B.MID 
+  				    		ORDER BY A.BNO DESC
+  				    	  ) A
+  				    WHERE ROWNUM <= #{pageNum} * #{amount}
+  				    ) B
+  			 WHERE RN> (#{pageNum} -1 ) * #{amount}
+  		
+  			 
+  		]]>
+  		 <if test= 'searchKeyword != null and searchKeyword !=""'>
+		 	<if test= 'searchType == "mname"'>
+		 	<![CDATA[
+		 		AND B.MNAME LIKE '%'||#{searchKeyword}||'%'
+		 		]]>
+		 	</if>
+			<if test= 'searchType == "title"'>
+			<![CDATA[
+		 		AND B.TITLE LIKE '%'||#{searchKeyword}||'%'
+		 		  					
+		 		]]>
+		 	</if>
+  		</if>
+	</select>
+
+	<insert id="insert">
+		INSERT INTO boardlist (bno, title, content, mid)
+		VALUES
+		(board_seq.nextval,
+		#{title}, #{content},#{mid})
+	</insert>
+
+	<select id="read" resultType="org.baek.domain.BoardVO">
+		SELECT bl.* , mb.mname 
+		FROM boardlist bl
+		LEFT OUTER JOIN  MEMBERTABLE mb ON bl.mid = mb.mid 
+		WHERE bno = #{bno}
+	</select>
+
+	<delete id="delete">
+		DELETE FROM boardlist WHERE bno = #{bno}
+	</delete>
+
+	<update id="update">
+		UPDATE boardlist
+		SET title = #{title},
+		content = #{content},
+		mid = #{mid},
+		updatedate = sysdate
+		WHERE bno = #{bno}
+	</update>
+
+	<select id="getTotalCount" resultType="int">
+		select count(*) from
+		boardlist
+	</select>
+
+	<update id="updateReplyCnt">
+		update boardlist set replycnt = replycnt + #{amount}
+		where bno = #{bno}
+	</update>
+	
+
+	<update id="updateHit">
+		update boardList set HIT = HIT + 1 where bno = #{bno}
+	</update>
+	
+	
+</mapper>

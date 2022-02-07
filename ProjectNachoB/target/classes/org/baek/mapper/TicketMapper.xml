@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.baek.mapper.TicketMapper">
+   <select id="getMing" resultType="org.baek.domain.MovieVO">
+      <![CDATA[
+         select * from movielist where ming = '현재 상영중' order by mno desc
+      ]]>
+   </select>
+   
+   <select id="getMingMovie" resultType="org.baek.domain.MovieVO" parameterType="int">
+      <![CDATA[
+         select * from movielist where mno = #{mno}
+      ]]>
+   </select>
+   
+   <insert id="insertTk" >
+      insert into ticketing
+      values(tk_seq.nextval, #{mid}, #{title},
+      #{theater},#{tkdate},#{tktime},#{tkpeople}, #{seat})
+   </insert>
+   
+   <select id="getMyTicket" resultType="org.baek.domain.TicketingVO" parameterType="String">
+      select mid, title, theater, tkdate, tktime, tkpeople, seat from ticketing where mid = #{mid}
+   </select>
+   
+   <delete id="deleteBook" parameterType="org.baek.domain.TicketingVO">
+      delete from ticketing where mid = #{mid} and title= #{title} and theater = #{theater} and 
+          tkdate = #{tkdate} and tktime= #{tktime} and seat= #{seat}
+   </delete>
+   
+   <delete id="deleteBookByTno">
+      delete from ticketing where tno = #{tno}
+   </delete>
+</mapper>

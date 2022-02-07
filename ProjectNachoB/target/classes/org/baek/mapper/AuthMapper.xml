@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="org.baek.mapper.AuthMapper">
+  
+  <!-- mid가 membertable쪽에 있어야지 삽입이 가능함(FK_constraint) -->
+  <insert id="register">
+  	insert into membertable_auth values(#{mid}, #{auth})
+  </insert>
+  
+  
+  
+  
+  
+  </mapper>
